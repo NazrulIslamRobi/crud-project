@@ -70,6 +70,18 @@ if('edit' == $task && !empty($_GET['id'])){
    
   }
 
+  if('delete' == $task && !empty($_GET['id'])){
+
+    $id = filter_input(INPUT_GET,'id',FILTER_SANITIZE_STRING);
+
+    if($id > 0){
+
+      deleteStudent($id);
+
+    }
+
+  }
+
 ?>
 
 <!DOCTYPE html>
@@ -131,7 +143,7 @@ if('edit' == $task && !empty($_GET['id'])){
               </div>
 
               <div class="form-group">
-                <label for="department">Department</label>br
+                <label for="department">Department</label>
                 <input type="text" class="form-control" name="department" id="" value="<?= !empty($_POST['department']) ? $_POST['department'] : ''  ?>"><br>
               </div>
 

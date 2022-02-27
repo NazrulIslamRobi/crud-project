@@ -1,6 +1,6 @@
 <?php
 
-    define( "DB_NAME", "C:\\Users\\Alpha Net\\Desktop\\practise\\data\\db.txt" );
+    define( "DB_NAME", "C:\\Users\\r\\Desktop\\crud-project\\data\\db.txt" );
 
     function seed()
     {
@@ -111,7 +111,7 @@
         <td><?=$student['name'];?></td>
         <td><?=$student['roll'];?></td>
         <td><?=$student['department'];?></td>
-        <td><a href="/?task=edit&id=<?=$student['id']?> ">Edit</a> | <a href="/?task=delete&id=<?=$student['id']?> ">Delete</a></td>
+        <td><a href="/?task=edit&id=<?=$student['id']?> ">Edit</a> | <a href="/?task=delete&id=<?=$student['id']?>" onclick="return confirm('Are you sure want to delete this?')">Delete</a></td>
       </tr>
        <?php }?>
 
@@ -127,7 +127,7 @@
 
         $students = unserialize( $serializeData );
 
-    // echo "<pre>";
+        // echo "<pre>";
         // print_r($students);
         // echo "</pre>";
 
@@ -145,38 +145,51 @@
 
     function studentUpdate( $name, $roll, $department, $id )
     {
-       $found = false;
+        $found = false;
 
-       $serializeData = file_get_contents(DB_NAME);
-       
-       $students = unserialize($serializeData);
+        $serializeData = file_get_contents( DB_NAME );
 
-      foreach ($students as $student) {
+        $students = unserialize( $serializeData );
 
-          if($student['roll'] == $roll && $student['id'] != $id){
+        foreach ( $students as $student ) {
 
-            $found = true;
-            break;
+            if ( $student['roll'] == $roll && $student['id'] != $id ) {
 
-          }
-      }   
+                $found = true;
+                break;
 
+            }
+        }
 
-      if(!$found){
+        if ( !$found ) {
 
-        $students[$id-1]['name'] = $name;
-        $students[$id-1]['roll'] = $roll;
-        $students[$id-1]['department'] = $department;
- 
-        $serializedData = serialize( $students );
- 
-        file_put_contents( DB_NAME, $serializedData, LOCK_EX );
+            $students[$id - 1]['name']       = $name;
+            $students[$id - 1]['roll']       = $roll;
+            $students[$id - 1]['department'] = $department;
 
-        return true;
-      }
-      return false;
-       
-        
+            $serializedData = serialize( $students );
+
+            file_put_contents( DB_NAME, $serializedData, LOCK_EX );
+
+            return true;
+        }
+        return false;
+
+    }
+
+    function deleteStudent( $id )
+    {
+
+        $serializeData = file_get_contents( DB_NAME );
+
+        $students = unserialize( $serializeData );
+
+        unset( $students[$id - 1] );
+
+        $serializeData = serialize( $students );
+
+        file_put_contents(DB_NAME, $serializeData );
+
     }
 
 ?>
