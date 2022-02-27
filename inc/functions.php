@@ -145,18 +145,36 @@
 
     function studentUpdate( $name, $roll, $department, $id )
     {
+       $found = false;
+
        $serializeData = file_get_contents(DB_NAME);
        
        $students = unserialize($serializeData);
 
-       $students[$id-1]['name'] = $name;
-       $students[$id-1]['roll'] = $roll;
-       $students[$id-1]['department'] = $department;
+      foreach ($students as $student) {
 
-       $serializedData = serialize( $students );
+          if($student['roll'] == $roll && $student['id'] != $id){
 
-       file_put_contents( DB_NAME, $serializedData, LOCK_EX );
-       return true;
+            $found = true;
+            break;
+
+          }
+      }   
+
+
+      if(!$found){
+
+        $students[$id-1]['name'] = $name;
+        $students[$id-1]['roll'] = $roll;
+        $students[$id-1]['department'] = $department;
+ 
+        $serializedData = serialize( $students );
+ 
+        file_put_contents( DB_NAME, $serializedData, LOCK_EX );
+
+        return true;
+      }
+      return false;
        
         
     }

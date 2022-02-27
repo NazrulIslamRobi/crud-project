@@ -70,8 +70,6 @@ if('edit' == $task && !empty($_GET['id'])){
    
   }
 
-
-
 ?>
 
 <!DOCTYPE html>
