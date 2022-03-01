@@ -1,6 +1,6 @@
 <?php
 
-    define( "DB_NAME", "C:\\Users\\r\\Desktop\\crud-project\\data\\db.txt" );
+    define( "DB_NAME", "C:\\Users\\Alpha Net\\Desktop\\crud-project\\data\\db.txt" );
 
     function seed()
     {
@@ -71,7 +71,7 @@
 
         if ( !$found ) {
             $student = array(
-                'id'         => count( $unserializeData ) + 1,
+                'id'         => getNewId($unserializeData),
                 'name'       => $name,
                 'roll'       => $roll,
                 'department' => $department,
@@ -127,9 +127,6 @@
 
         $students = unserialize( $serializeData );
 
-        // echo "<pre>";
-        // print_r($students);
-        // echo "</pre>";
 
         foreach ( $students as $student ) {
 
@@ -184,12 +181,26 @@
 
         $students = unserialize( $serializeData );
 
-        unset( $students[$id - 1] );
+        foreach ( $students as $key => $student ) {
+
+            if ( $student['id'] == $id ) {
+
+                unset($students[$key]);
+
+            }
+        }
 
         $serializeData = serialize( $students );
 
         file_put_contents(DB_NAME, $serializeData );
 
+    }
+
+    function getNewId($students){
+
+        $id = max(array_column($students,'id'));
+
+        return $id+1;
     }
 
 ?>
