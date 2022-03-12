@@ -71,7 +71,7 @@
 
         if ( !$found ) {
             $student = array(
-                'id'         => getNewId($unserializeData),
+                'id'         => getNewId( $unserializeData ),
                 'name'       => $name,
                 'roll'       => $roll,
                 'department' => $department,
@@ -93,7 +93,8 @@
     {
 
         $getserializedData = file_get_contents( DB_NAME );
-        $data              = unserialize( $getserializedData );
+
+        $data = unserialize( $getserializedData );
 
     ?>
     <table class="table table-bordered">
@@ -102,7 +103,10 @@
     <th>Name</th>
     <th>Roll</th>
     <th>Department</th>
+    <?php if(isAdmin() || isEditor()):?>
     <th>Action</th>
+    <?php endif; ?>
+
     </thead>
     <tbody>
         <?php
@@ -111,9 +115,17 @@
         <td><?=$student['name'];?></td>
         <td><?=$student['roll'];?></td>
         <td><?=$student['department'];?></td>
-        <td><a href="/?task=edit&id=<?=$student['id']?> ">Edit</a> | <a href="/?task=delete&id=<?=$student['id']?>" onclick="return confirm('Are you sure want to delete this?')">Delete</a></td>
-      </tr>
+
+        <?php if(isAdmin() || isEditor()):?>
+
+            <td><a href="/?task=edit&id=<?=$student['id']?> ">Edit</a>
+            <?php if(isAdmin()):?>
+            | <a href="/?task=delete&id=<?=$student['id']?>" onclick="return confirm('Are you sure want to delete this?')">Delete</a></td>
+            <?php endif;?>
+        <?php endif; ?>
+        </tr>
        <?php }?>
+       
 
     </tbody>
 </table>
@@ -126,7 +138,6 @@
         $serializeData = file_get_contents( DB_NAME );
 
         $students = unserialize( $serializeData );
-
 
         foreach ( $students as $student ) {
 
@@ -185,22 +196,33 @@
 
             if ( $student['id'] == $id ) {
 
-                unset($students[$key]);
+                unset( $students[$key] );
 
             }
         }
 
         $serializeData = serialize( $students );
 
-        file_put_contents(DB_NAME, $serializeData );
+        file_put_contents( DB_NAME, $serializeData );
 
     }
 
-    function getNewId($students){
+    function getNewId( $students )
+    {
 
-        $id = max(array_column($students,'id'));
+        $id = max( array_column( $students, 'id' ) );
 
-        return $id+1;
+        return $id + 1;
+    }
+
+    function isAdmin() {   
+
+        return ('admin' == $_SESSION['role']);
+    }
+
+    function isEditor() {   
+
+        return ('editor' == $_SESSION['role']);
     }
 
 ?>
